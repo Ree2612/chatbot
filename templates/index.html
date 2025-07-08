@@ -1,0 +1,67 @@
+import streamlit as st
+from chatbot_logic import get_bot_response
+
+# Set Streamlit page config
+st.set_page_config(page_title="Cybersecurity Chatbot", page_icon="🤖", layout="centered")
+
+# CSS for custom styling
+st.markdown("""
+    <style>
+    body {
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        color: white;
+    }
+    .stChat {
+        background-color: rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 16px;
+    }
+    .bot-bubble {
+        background-color: #3949ab;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 15px 15px 15px 0;
+        margin-bottom: 10px;
+    }
+    .user-bubble {
+        background-color: #00ffc3;
+        color: black;
+        padding: 10px 15px;
+        border-radius: 15px 15px 0 15px;
+        text-align: right;
+        margin-bottom: 10px;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+st.title("🤖 Cybersecurity AI Chatbot")
+
+# Session state for storing messages
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
+
+# Input field
+user_input = st.text_input("Ask me about cyber threats or security tips:", key="input")
+
+# Process input
+if user_input:
+    # Get bot response
+    reply, threat_flag, threat_terms = get_bot_response(user_input)
+
+    # Save to session state
+    st.session_state.chat_history.append(("user", user_input))
+    st.session_state.chat_history.append(("bot", reply))
+    if threat_flag:
+        st.session_state.chat_history.append(("threat", threat_terms))
+
+# Display chat history
+for sender, msg in st.session_state.chat_history:
+    if sender == "user":
+        st.markdown(f'<div class="user-bubble"><strong>You:</strong> {msg}</div>', unsafe_allow_html=True)
+    elif sender == "bot":
+        st.markdown(f'<div class="bot-bubble"><img src="https://cdn-icons-png.flaticon.com/512/4712/4712107.png" width="20" style="margin-right:10px;"><strong>Bot:</strong> {msg}</div>', unsafe_allow_html=True)
+    elif sender == "threat":
+        st.warning(f"⚠ Threat Detected: {', '.join(msg)}")
+
+# Footer
+st.caption("⚠ Your IP & location are logged for cybersecurity awareness.")
