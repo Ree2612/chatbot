@@ -1,0 +1,8 @@
+streamlit==1.45.1
+spacy==3.8.7
+cohere==5.15.0
+python-dotenv==1.1.1
+pandas==2.2.3
+requests==2.32.3
+folium==0.16.0
+streamlit-folium==0.18.0
